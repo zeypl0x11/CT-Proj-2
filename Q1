@@ -1,0 +1,46 @@
+def get_cycle(followers, s):
+    visited = []
+    for i in range(len(followers)):     #Initialise list of False values that correspond to each node
+        visited.append(False)           #To track if a node has been visited
+
+    cycle = []  
+    list_of_cycles = [] 
+
+    visited[s] = True   
+
+    def check_adj(followers, current_node, s): #Function to check adj nodes
+        nonlocal visited
+        nonlocal cycle
+
+        if visited[current_node]:   #Check if current node has been visited
+            if current_node == s:   
+                cycle.append(s)     
+                list_of_cycles.append(cycle)    
+                cycle = cycle[0: -1]    #Remove the current node from the ongoing cycle for the next adj nodes
+                return
+            else:                   
+                return
+        if followers[current_node] == []:   
+            return
+        
+        cycle.append(current_node)  
+        visited[current_node] = True    #Set the visited status of the current_node to True
+
+        for adj in followers[current_node]: 
+            check_adj(followers, adj, s)    #Recursively checks the adj of each node
+        visited[current_node] = False       #when all adj nodes have been checked set visited status to False
+        cycle = cycle[0:-1]     #Remove current node from the ongoing cycle
+        return
+    
+    for adj in followers[s]:
+        check_adj(followers, adj, s)
+    
+    for i in range(len(list_of_cycles)):
+        list_of_cycles[i].insert(0, s)
+
+    if list_of_cycles == []:
+        return []
+    else:
+        longest_cycle = max(list_of_cycles)
+        longest_cycle = longest_cycle[::-1]
+    return longest_cycle
